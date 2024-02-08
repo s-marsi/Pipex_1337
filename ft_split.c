@@ -6,36 +6,11 @@
 /*   By: smarsi <smarsi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/07 19:00:28 by smarsi            #+#    #+#             */
-/*   Updated: 2024/02/07 19:15:00 by smarsi           ###   ########.fr       */
+/*   Updated: 2024/02/08 10:08:10 by smarsi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <stdio.h>
-#include <stdlib.h>
-
-size_t	ft_strlen(const char *s)
-{
-	size_t	len;
-
-	len = 0;
-	while (*(s++))
-		len++;
-	return (len);
-}
-
-size_t	ft_strlcpy(char *dst, const char *src, size_t dstsize)
-{
-	size_t	len_src;
-
-	len_src = ft_strlen(src);
-	if (dstsize > 0)
-	{
-		while (*src && dstsize-- > 1)
-			*dst++ = *src++;
-		*dst = '\0';
-	}
-	return (len_src);
-}
+#include "pipex.h"
 
 static	void	ft_free(char **s)
 {
@@ -84,9 +59,9 @@ static	char	*get_word(char *dst, char const *src, char c, int	*index)
 		i++;
 	len = (i - start) + 1;
 	dst = malloc((len + 1) * sizeof(char));
-    if (!dst)
-        return (NULL);
-    dst[len] = '\0';
+	if (!dst)
+		return (NULL);
+	dst[len] = '\0';
 	ft_strlcpy(dst, src + start, len);
 	*index = i;
 	return (dst);
@@ -120,7 +95,7 @@ char	**ft_split(char const *s, char c)
 	dst = malloc((count + 1) * sizeof(char *));
 	if (!dst)
 		return (NULL);
-    dst[count] = NULL;
+	dst[count] = NULL;
 	dst = fill_array(dst, s, c, count);
 	return (dst);
 }
