@@ -6,7 +6,7 @@
 /*   By: smarsi <smarsi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/08 10:02:33 by smarsi            #+#    #+#             */
-/*   Updated: 2024/02/08 10:15:46 by smarsi           ###   ########.fr       */
+/*   Updated: 2024/02/08 13:02:08 by smarsi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,7 @@
 # include <stdio.h>
 # include <stdlib.h>
 # include <unistd.h>
+# include <fcntl.h>
 
 char	*ft_strnstr(const char *haystack, const char *needle);
 size_t	ft_strlcpy(char *dst, const char *src, size_t dstsize);
