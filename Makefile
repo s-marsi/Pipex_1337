@@ -4,7 +4,7 @@ AR = ar -r
 
 NAME = pipex.a
 
-FILES = ft_split.c ft_strlcpy.c ft_strnstr.c ft_strjoin.c
+FILES = ft_split.c ft_strlcpy.c ft_strnstr.c ft_strjoin.c pipex.c main.c
 
 # BONUS_FILES = 
 
