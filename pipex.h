@@ -6,7 +6,7 @@
 /*   By: smarsi <smarsi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/08 10:02:33 by smarsi            #+#    #+#             */
-/*   Updated: 2024/02/10 19:18:32 by smarsi           ###   ########.fr       */
+/*   Updated: 2024/02/11 10:18:01 by smarsi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,9 +18,12 @@
 # include <fcntl.h>
 
 void	fork_and_execute(char *cmd[], char *av[], char *envp[]);
+char	*get_cmd(char *av, char *path);
+char	*get_path(char *envp[]);
 char	*ft_strnstr(const char *haystack, const char *needle);
 size_t	ft_strlcpy(char *dst, const char *src, size_t dstsize);
 char	**ft_split(char const *s, char c);
 char	*ft_strjoin(char *s1, char *s2);
 void	print_str(char *str);
+
 #endif

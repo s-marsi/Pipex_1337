@@ -1,10 +1,12 @@
 #CFLAGS = -Wall -Wextra -Werror
 
+CC = cc
+
 AR = ar -r
 
-NAME = pipex.a
+NAME = pipex
 
-FILES = ft_split.c ft_strlcpy.c ft_strnstr.c ft_strjoin.c pipex.c main.c
+FILES = ft_split.c ft_strlcpy.c ft_strnstr.c ft_strjoin.c pipex.c get_path.c main.c
 
 # BONUS_FILES = 
 
@@ -14,8 +16,11 @@ FILES_O = $(FILES:.c=.o)
 
 all : $(NAME)
 
+%.o : %.c
+	$(CC) -c $< -o $@
+
 $(NAME) : $(FILES_O)
-	$(AR) $(NAME) $(FILES_O)
+	$(CC) $(FILES_O) -o $(NAME) 
 
 # bonus : $(BONUS_O)
 
