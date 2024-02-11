@@ -6,7 +6,7 @@
 /*   By: smarsi <smarsi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/08 10:14:27 by smarsi            #+#    #+#             */
-/*   Updated: 2024/02/09 17:58:57 by smarsi           ###   ########.fr       */
+/*   Updated: 2024/02/11 10:43:49 by smarsi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,12 +71,13 @@ char	*ft_strjoin(char *s1, char *s2)
 		return (ft_strdup(s2));
 	else if (!s2)
 		return (ft_strdup(s1));
-	len = ft_strlen(s1) + ft_strlen(s2) + 1;
+	len = ft_strlen(s1) + ft_strlen(s2) + 2;
 	str = malloc(len * sizeof(char));
 	if (!str)
 		return (str);
 	str[0] = '\0';
 	ft_strlcat(str, s1, ft_strlen(s1) + 1);
-	ft_strlcat(str, s2, len);
+	ft_strlcat(str, "/", ft_strlen(s1) + 2);
+	ft_strlcat(str, s2, len + 1);
 	return (str);
 }
