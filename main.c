@@ -6,7 +6,7 @@
 /*   By: smarsi <smarsi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/06 09:37:02 by smarsi            #+#    #+#             */
-/*   Updated: 2024/02/11 12:21:12 by smarsi           ###   ########.fr       */
+/*   Updated: 2024/02/12 11:51:52 by smarsi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@ int	main(int ac, char *av[], char *envp[])
 
 	if (ac != 5)
 	{
-		write(1, "cmd shld be like : ./pipex inFile cmd1 cmd2 outfile", 82);
+		write(STDERR_FILENO, "cmd shld be like : ./pipex inFile cmd1 cmd2 outfile", 82);
 		exit(1);
 	}
 	cmd[2] = NULL;

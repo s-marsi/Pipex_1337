@@ -6,7 +6,7 @@
 /*   By: smarsi <smarsi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/11 09:22:35 by smarsi            #+#    #+#             */
-/*   Updated: 2024/02/11 12:38:03 by smarsi           ###   ########.fr       */
+/*   Updated: 2024/02/12 11:45:27 by smarsi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,11 +17,13 @@ static void	ft_free(char **str, char **str2)
 	int	i;
 
 	i = 0;
-	while (str[i])
-		free(str[i++]);
+	if (str)
+		while (str[i])
+			free(str[i++]);
 	i = 0;
-	while (str2[i])
-		free(str2[i++]);
+	if (str2)
+		while (str2[i])
+			free(str2[i++]);
 	free(str);
 	free(str2);
 }
@@ -56,7 +58,7 @@ static char	*path_cmd(char **split_path, char *cmd)
 	while (*split_path)
 	{
 		tmp = ft_strjoin(*(split_path++), cmd);
-		if (access(tmp, X_OK) == 0)
+		if (access(tmp, F_OK & X_OK) == 0)
 		{
 			cmd_path = tmp;
 			break ;
@@ -74,11 +76,12 @@ char	*get_cmd(char *av, char *path)
 	char	*tmp;
 
 	cmd_path = NULL;
+	split_path = NULL;
 	if (path)
 		split_path = ft_split(path, ':');
 	cmd = ft_split(av, ' ');
 	if (access(cmd[0], F_OK & X_OK) == 0)
-		cmd_path = cmd[0];
+		cmd_path = ft_strdup(cmd[0]);
 	else
 		cmd_path = path_cmd(split_path, cmd[0]);
 	ft_free(split_path, cmd);
