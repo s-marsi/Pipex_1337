@@ -6,7 +6,7 @@
 /*   By: smarsi <smarsi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/08 10:02:33 by smarsi            #+#    #+#             */
-/*   Updated: 2024/02/11 10:18:01 by smarsi           ###   ########.fr       */
+/*   Updated: 2024/02/12 11:45:14 by smarsi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,6 +24,7 @@ char	*ft_strnstr(const char *haystack, const char *needle);
 size_t	ft_strlcpy(char *dst, const char *src, size_t dstsize);
 char	**ft_split(char const *s, char c);
 char	*ft_strjoin(char *s1, char *s2);
+char	*ft_strdup(const char *s1);
 void	print_str(char *str);
 
 #endif
