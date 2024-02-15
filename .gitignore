@@ -15,7 +15,7 @@
 # Precompiled Headers
 *.gch
 *.pch
-pipex
+
 # Libraries
 *.lib
 *.a
@@ -50,3 +50,9 @@ modules.order
 Module.symvers
 Mkfile.old
 dkms.conf
+
+
+# project files
+
+pipex
+*.txt
