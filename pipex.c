@@ -6,7 +6,7 @@
 /*   By: smarsi <smarsi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/10 19:16:47 by smarsi            #+#    #+#             */
-/*   Updated: 2024/02/15 09:35:00 by smarsi           ###   ########.fr       */
+/*   Updated: 2024/02/15 10:36:10 by smarsi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,7 +49,7 @@ static void	child(char *cmd[], char *av[], char *envp[], int *fdp)
 	if (execve(cmd[0], split_cmd, envp) == -1)
 	{
 		ft_free(cmd, "command 1 not found");
-		exit(1);
+		exit(127);
 	}
 }
 
@@ -72,13 +72,14 @@ static void	parent(char *cmd[], char *av[], char *envp[], int *fdp)
 	if (execve(cmd[1], split_cmd, envp) == -1)
 	{
 		ft_free(cmd, "command 2 not found");
-		exit(2);
+		exit(127);
 	}
 }
 
 void	fork_and_execute(char *cmd[], char *av[], char *envp[])
 {
 	pid_t	id;
+	pid_t	id2;
 	int		fd;
 	int		fdp[2];
 
@@ -93,8 +94,10 @@ void	fork_and_execute(char *cmd[], char *av[], char *envp[])
 			child(cmd, av, envp, fdp);
 		else
 		{
-			wait(NULL);
-			parent(cmd, av, envp, fdp);
+			id2 = fork();
+			if (id2 == 0)
+				parent(cmd, av, envp, fdp);
 		}
 	}
+	close_file(fdp, fd);
 }
