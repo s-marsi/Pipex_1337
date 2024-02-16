@@ -6,12 +6,11 @@
 /*   By: smarsi <smarsi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/06 09:37:02 by smarsi            #+#    #+#             */
-/*   Updated: 2024/02/15 10:36:44 by smarsi           ###   ########.fr       */
+/*   Updated: 2024/02/15 16:15:10 by smarsi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "pipex.h"
-#include "string.h"
 
 int	main(int ac, char *av[], char *envp[])
 {
