@@ -6,7 +6,7 @@
 /*   By: smarsi <smarsi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/08 10:02:33 by smarsi            #+#    #+#             */
-/*   Updated: 2024/02/15 18:24:34 by smarsi           ###   ########.fr       */
+/*   Updated: 2024/02/17 11:44:06 by smarsi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,6 +27,8 @@ char	**ft_split(char const *s, char c);
 char	*ft_strjoin(char *s1, char *s2);
 char	*ft_strdup(const char *s1);
 void	print_str(char *str);
+void	close_file(int *fdp, int fd);
+void	free_notify(char **str, char *msg);
 typedef struct bonus_list
 {
 	char	*path;
