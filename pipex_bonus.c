@@ -1,16 +1,33 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   pipex.c                                            :+:      :+:    :+:   */
+/*   pipex_bonus.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: smarsi <smarsi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/02/10 19:16:47 by smarsi            #+#    #+#             */
-/*   Updated: 2024/02/17 11:58:48 by smarsi           ###   ########.fr       */
+/*   Created: 2024/02/15 16:17:40 by smarsi            #+#    #+#             */
+/*   Updated: 2024/02/17 11:59:02 by smarsi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "pipex.h"
+
+static void	ft_free(char **str, char *msg)
+{
+	int	i;
+
+	perror(msg);
+	i = 0;
+	while (str[i])
+		free(str[i++]);
+}
+
+static void	close_file(int *fdp, int fd)
+{
+	close(fdp[0]);
+	close(fdp[1]);
+	close(fd);
+}
 
 static void	child(char *cmd[], char *av[], char *envp[], int *fdp)
 {
@@ -21,16 +38,16 @@ static void	child(char *cmd[], char *av[], char *envp[], int *fdp)
 	if (fd == -1 || dup2(fd, 0) == -1 || dup2(fdp[1], 1) == -1)
 	{
 		if (fd == -1)
-			free_notify(cmd, "File1");
+			ft_free(cmd, "File1");
 		else
-			free_notify(cmd, "Error duplicating fd to (stdin|stdout)");
+			ft_free(cmd, "Error duplicating file descriptor to (stdin|stdout)");
 		exit(1);
 	}
 	split_cmd = ft_split(av[2], ' ');
 	close_file(fdp, fd);
 	if (execve(cmd[0], split_cmd, envp) == -1)
 	{
-		free_notify(cmd, "command 1 not found");
+		ft_free(cmd, "command 1 not found");
 		exit(127);
 	}
 }
@@ -45,15 +62,15 @@ static void	parent(char *cmd[], char *av[], char *envp[], int *fdp)
 	if (fd == -1 || dup2(fd, 1) == -1 || dup2(fdp[0], 0) == -1)
 	{
 		if (fd == -1)
-			free_notify(cmd, "Error when create File2");
+			ft_free(cmd, "Error when create File2");
 		else
-			free_notify(cmd, "Error duplicating fd to (stdin|stdout)");
+			ft_free(cmd, "Error duplicating file descriptor to (stdin|stdout)");
 		exit(2);
 	}
 	close_file(fdp, fd);
 	if (execve(cmd[1], split_cmd, envp) == -1)
 	{
-		free_notify(cmd, "command 2 not found");
+		ft_free(cmd, "command 2 not found");
 		exit(127);
 	}
 }

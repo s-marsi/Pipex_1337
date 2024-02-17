@@ -1,4 +1,4 @@
-#CFLAGS = -Wall -Wextra -Werror
+CFLAGS = -Wall -Wextra -Werror
 
 CC = cc
 
@@ -20,7 +20,7 @@ all : $(NAME)
 	$(CC) -c $< -o $@
 
 $(NAME) : $(FILES_O)
-	$(CC) $(FILES_O) -o $(NAME) 
+	$(CC) $(CFLAGS) $(FILES_O) -o $(NAME) 
 
 # bonus : $(BONUS_O)
 
