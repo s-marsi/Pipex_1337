@@ -1,16 +1,25 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   main.c                                             :+:      :+:    :+:   */
+/*   here_doc.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: smarsi <smarsi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/02/06 09:37:02 by smarsi            #+#    #+#             */
-/*   Updated: 2024/02/18 15:18:44 by smarsi           ###   ########.fr       */
+/*   Created: 2024/02/17 12:35:04 by smarsi            #+#    #+#             */
+/*   Updated: 2024/02/18 15:19:22 by smarsi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "pipex.h"
+
+void	put_str(char *str, int fd)
+{
+	while (*str)
+	{
+		write(fd, str, 1);
+		str++;
+	}
+}
 
 static void	execute_cmd(char *cmd, char *env[])
 {
@@ -31,7 +40,7 @@ static void	execute_cmd(char *cmd, char *env[])
 	}
 }
 
-static void	pipe_redirect(char *cmd, char *env[], int fd_in)
+static void	pipe_redirect(char *cmd, char *env[])
 {
 	int		id;
 	int		fdp[2];
@@ -49,21 +58,23 @@ static void	pipe_redirect(char *cmd, char *env[], int fd_in)
 	}
 	if (id == 0)
 	{
-		close(fdp[0]);
 		dup2(fdp[1], 1);
+		close_file(fdp, -1);
 		execute_cmd(cmd, env);
 	}
 	dup2(fdp[0], 0);
-	close(fdp[0]);
-	close(fdp[1]);
+	close_file(fdp, -1);
 }
 
-static void	foreach_cmds(char *av[], char *env[], int fd_in)
+static void	foreach_cmds(int ac, char *av[], char *env[])
 {
+	int	i;
 	int	pid;
 	int	status;
 
-	pipe_redirect(av[2], env, fd_in);
+	i = 3;
+	while (i < ac - 2)
+		pipe_redirect(av[i++], env);
 	pid = fork();
 	if (pid < 0)
 	{
@@ -71,7 +82,7 @@ static void	foreach_cmds(char *av[], char *env[], int fd_in)
 		exit(10);
 	}
 	if (pid == 0)
-		execute_cmd(av[3], env);
+		execute_cmd(av[ac - 2], env);
 	while (waitpid(-1, &status, 0) != -1)
 	{
 		if (WEXITSTATUS(status) == 127 || WEXITSTATUS(status) == 3)
@@ -79,39 +90,28 @@ static void	foreach_cmds(char *av[], char *env[], int fd_in)
 	}
 }
 
-static void	handle_io_files(char *av[], char *env[], int ac)
+void	heredoc(int ac, char *av[], char *env[])
 {
-	int	fd_in;
-	int	fd_out;
+	char	*buf;
+	int		fd_out;
+	int		fdp[2];
 
-	fd_in = open(av[1], O_RDONLY);
-	fd_out = open(av[ac - 1], O_CREAT | O_WRONLY | O_TRUNC, 0600);
-	if (fd_in == -1 || fd_out == -1)
+	buf = NULL;
+	pipe(fdp);
+	while (ft_strncmp(buf, av[2], ft_strlen(av[2])) != 0)
 	{
-		if (fd_in == -1)
-			perror("Infile Not found");
-		if (fd_out == -1)
-			perror("Error creating outfile");
-		exit(1);
+		write(0, "heredoc>", 8);
+		buf = get_next_line(0);
+		if (ft_strncmp(buf, av[2], ft_strlen(av[2])) != 0)
+			put_str(buf, fdp[1]);
+		free(buf);
 	}
-	if (dup2(fd_in, 0) == -1 || dup2(fd_out, 1) == -1)
+	fd_out = open(av[ac - 1], O_CREAT | O_WRONLY | O_TRUNC, 0600);
+	if (dup2(fdp[0], 0) == -1 || dup2(fd_out, 1) == -1)
 	{
 		perror("Error duplicating file descriptor to (stdin|stdout)");
 		exit(1);
 	}
-	close(fd_in);
-	close(fd_out);
-	foreach_cmds(av, env, fd_in);
-}
-
-int	main(int ac, char *av[], char *env[])
-{
-	if (ac != 5)
-	{
-		write(2, "cmd shld be like : ./pipex inFile cmd1 cmd2 outfile\n", 53);
-		exit(1);
-	}
-	else
-		handle_io_files(av, env, ac);
-	return (0);
+	close_file(fdp, fd_out);
+	foreach_cmds(ac, av, env);
 }

@@ -6,7 +6,7 @@
 /*   By: smarsi <smarsi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/15 11:57:34 by smarsi            #+#    #+#             */
-/*   Updated: 2024/02/17 11:44:03 by smarsi           ###   ########.fr       */
+/*   Updated: 2024/02/17 20:47:05 by smarsi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,7 @@ static void	execute_cmd(char *cmd, char *env[])
 	}
 }
 
-static void	pipe_redirect(char *cmd, char *env[])
+static void	pipe_redirect(char *cmd, char *env[], int fd_in)
 {
 	int		id;
 	int		fdp[2];
@@ -50,14 +50,15 @@ static void	pipe_redirect(char *cmd, char *env[])
 	if (id == 0)
 	{
 		dup2(fdp[1], 1);
-		close_file(fdp, -1);
+		close_file(fdp, fd_in);
 		execute_cmd(cmd, env);
 	}
+	close(fd_in);
 	dup2(fdp[0], 0);
 	close_file(fdp, -1);
 }
 
-static void	foreach_cmds(int ac, char *av[], char *env[])
+static void	foreach_cmds(int ac, char *av[], char *env[], int fd_in)
 {
 	int	i;
 	int	pid;
@@ -65,7 +66,7 @@ static void	foreach_cmds(int ac, char *av[], char *env[])
 
 	i = 2;
 	while (i < ac - 2)
-		pipe_redirect(av[i++], env);
+		pipe_redirect(av[i++], env, fd_in);
 	pid = fork();
 	if (pid < 0)
 	{
@@ -76,7 +77,7 @@ static void	foreach_cmds(int ac, char *av[], char *env[])
 		execute_cmd(av[ac - 2], env);
 	while (waitpid(-1, &status, 0) != -1)
 	{
-		if (WEXITSTATUS(status) == 127 || WEXITSTATUS(status) == 1)
+		if (WEXITSTATUS(status) == 127 || WEXITSTATUS(status) == 3)
 			exit(WEXITSTATUS(status));
 	}
 }
@@ -88,18 +89,23 @@ int	main(int ac, char *av[], char *env[])
 
 	if (ac < 5)
 	{
-		write(2, "cmd shld be like : ./pipex inFile cmd1 cmd2 outfile\n", 53);
+		write(2, "cmd shld be like :./pipex inFile cmd1...cmdn outfile\n", 56);
 		exit(1);
 	}
-	fd_in = open(av[1], O_RDONLY);
-	fd_out = open(av[ac - 1], O_CREAT | O_WRONLY | O_TRUNC, 0600);
-	if (dup2(fd_in, 0) == -1 || dup2(fd_out, 1) == -1)
+	else if (ft_strncmp(av[1], "here_doc", ft_strlen(av[1])) == 0)
+		heredoc(ac, av, env);
+	else
 	{
-		perror("Error duplicating file descriptor to (stdin|stdout)");
-		exit(1);
+		fd_in = open(av[1], O_RDONLY);
+		fd_out = open(av[ac - 1], O_CREAT | O_WRONLY | O_TRUNC, 0600);
+		if (dup2(fd_in, 0) == -1 || dup2(fd_out, 1) == -1)
+		{
+			perror("Error duplicating file descriptor to (stdin|stdout)");
+			exit(1);
+		}
+		close(fd_in);
+		close(fd_out);
+		foreach_cmds(ac, av, env, fd_in);
 	}
-	close(fd_in);
-	close(fd_out);
-	foreach_cmds(ac, av, env);
 	return (0);
 }

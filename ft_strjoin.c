@@ -6,23 +6,13 @@
 /*   By: smarsi <smarsi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/08 10:14:27 by smarsi            #+#    #+#             */
-/*   Updated: 2024/02/11 10:43:49 by smarsi           ###   ########.fr       */
+/*   Updated: 2024/02/17 18:35:08 by smarsi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "pipex.h"
 
-static size_t	ft_strlen(const char *s)
-{
-	size_t	len;
-
-	len = 0;
-	while (*(s++))
-		len++;
-	return (len);
-}
-
-static size_t	ft_strlcat(char *dst, const char *src, size_t dstsize)
+size_t	ft_strlcat(char *dst, const char *src, size_t dstsize)
 {
 	size_t	len_dst;
 	size_t	len_src;
@@ -77,7 +67,6 @@ char	*ft_strjoin(char *s1, char *s2)
 		return (str);
 	str[0] = '\0';
 	ft_strlcat(str, s1, ft_strlen(s1) + 1);
-	ft_strlcat(str, "/", ft_strlen(s1) + 2);
 	ft_strlcat(str, s2, len + 1);
 	return (str);
 }
