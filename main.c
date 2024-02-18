@@ -6,72 +6,68 @@
 /*   By: smarsi <smarsi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/06 09:37:02 by smarsi            #+#    #+#             */
-/*   Updated: 2024/02/18 15:18:44 by smarsi           ###   ########.fr       */
+/*   Updated: 2024/02/18 16:34:52 by smarsi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "pipex.h"
 
-static void	execute_cmd(char *cmd, char *env[])
+static void	child1(char *av[], char *env[], int *fdp, char *path)
 {
+	char	**cmd;
+	char	*path_cmd;
 	char	*msg;
-	char	*path;
-	char	**split_cmd;
-	char	*cmd_path;
+	int		fd;
 
-	path = get_path(env);
-	cmd_path = get_cmd(cmd, path);
-	split_cmd = ft_split(cmd, ' ');
-	if (execve(cmd_path, split_cmd, env) == -1)
+	fd = open(av[1], O_RDONLY);
+	if (fd == -1 || dup2(fd, 0) == -1 || dup2(fdp[1], 1) == -1)
 	{
-		msg = ft_strjoin(split_cmd[0], " command not found");
-		free_notify(split_cmd, msg);
+		perror("");
+		exit(3);
+	}
+	close(fdp[0]);
+	path_cmd = get_cmd(av[2], path);
+	cmd = ft_split(av[2], ' ');
+	if (execve(path_cmd, cmd, env) == -1)
+	{
+		msg = ft_strjoin(cmd[0], " command not found");
+		free_notify(cmd, msg);
 		free(msg);
 		exit(127);
 	}
 }
 
-static void	pipe_redirect(char *cmd, char *env[], int fd_in)
+static void	child2(char *av[], char *env[], int *fdp, char *path)
 {
-	int		id;
-	int		fdp[2];
+	char	**cmd;
+	char	*path_cmd;
+	char	*msg;
+	int		fd;
 
-	if (pipe(fdp) != 0)
+	fd = open(av[4], O_CREAT | O_WRONLY | O_TRUNC, 0600);
+	if (fd == -1 || dup2(fdp[0], 0) == -1 || dup2(fd, 1) == -1)
 	{
-		perror("pipe");
+		perror("");
 		exit(3);
 	}
-	id = fork();
-	if (id < 0)
-	{
-		perror("fork");
-		exit(3);
-	}
-	if (id == 0)
-	{
-		close(fdp[0]);
-		dup2(fdp[1], 1);
-		execute_cmd(cmd, env);
-	}
-	dup2(fdp[0], 0);
-	close(fdp[0]);
 	close(fdp[1]);
+	path_cmd = get_cmd(av[3], path);
+	cmd = ft_split(av[3], ' ');
+	if (execve(path_cmd, cmd, env) == -1)
+	{
+		msg = ft_strjoin(cmd[0], " command not found");
+		free_notify(cmd, msg);
+		free(msg);
+		exit(127);
+	}
 }
 
-static void	foreach_cmds(char *av[], char *env[], int fd_in)
+static void	function_line(int *fdp)
 {
-	int	pid;
 	int	status;
 
-	pipe_redirect(av[2], env, fd_in);
-	pid = fork();
-	if (pid < 0)
-	{
-		perror("Fork");
-		exit(10);
-	}
-	if (pid == 0)
-		execute_cmd(av[3], env);
+	close(fdp[0]);
+	close(fdp[1]);
 	while (waitpid(-1, &status, 0) != -1)
 	{
 		if (WEXITSTATUS(status) == 127 || WEXITSTATUS(status) == 3)
@@ -79,29 +75,31 @@ static void	foreach_cmds(char *av[], char *env[], int fd_in)
 	}
 }
 
-static void	handle_io_files(char *av[], char *env[], int ac)
+static void	pipex(char *av[], char *env[])
 {
-	int	fd_in;
-	int	fd_out;
+	int	pid;
+	int	pid2;
+	int	fdp[2];
 
-	fd_in = open(av[1], O_RDONLY);
-	fd_out = open(av[ac - 1], O_CREAT | O_WRONLY | O_TRUNC, 0600);
-	if (fd_in == -1 || fd_out == -1)
+	if (pipe(fdp) < 0)
+		perror("pipe");
+	pid = fork();
+	if (pid < 0)
 	{
-		if (fd_in == -1)
-			perror("Infile Not found");
-		if (fd_out == -1)
-			perror("Error creating outfile");
-		exit(1);
+		perror("fork");
+		exit(3);
 	}
-	if (dup2(fd_in, 0) == -1 || dup2(fd_out, 1) == -1)
+	if (pid == 0)
+		child1(av, env, fdp, get_path(env));
+	else
 	{
-		perror("Error duplicating file descriptor to (stdin|stdout)");
-		exit(1);
+		pid2 = fork();
+		if (pid < 0)
+			perror("fork");
+		if (pid2 == 0)
+			child2(av, env, fdp, get_path(env));
 	}
-	close(fd_in);
-	close(fd_out);
-	foreach_cmds(av, env, fd_in);
+	function_line(fdp);
 }
 
 int	main(int ac, char *av[], char *env[])
@@ -112,6 +110,6 @@ int	main(int ac, char *av[], char *env[])
 		exit(1);
 	}
 	else
-		handle_io_files(av, env, ac);
+		pipex(av, env);
 	return (0);
 }
