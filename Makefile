@@ -5,6 +5,7 @@ CC = cc
 AR = ar -r
 
 NAME = pipex
+
 NAME_BONUS = pipex_bonus
 
 
