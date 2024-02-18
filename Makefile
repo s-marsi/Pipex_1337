@@ -32,7 +32,7 @@ clean :
 	rm -f $(FILES_O) $(BONUS_O)
 
 fclean : clean
-	rm -f $(NAME)
+	rm -f $(NAME) $(NAME_BONUS)
 
 re : fclean all
 
