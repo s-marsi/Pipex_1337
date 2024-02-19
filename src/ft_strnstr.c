@@ -6,11 +6,11 @@
 /*   By: smarsi <smarsi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/07 18:39:26 by smarsi            #+#    #+#             */
-/*   Updated: 2024/02/09 17:59:18 by smarsi           ###   ########.fr       */
+/*   Updated: 2024/02/19 15:29:56 by smarsi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "pipex.h" 
+#include "../pipex.h"
 
 char	*ft_strnstr(const char *haystack, const char *needle)
 {

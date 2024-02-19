@@ -2,38 +2,34 @@ CFLAGS = -Wall -Wextra -Werror
 
 CC = cc
 
-AR = ar -r
 
 NAME = pipex
 
-FILES = ft_split.c ft_strlcpy.c ft_strnstr.c ft_strjoin.c pipex.c get_path.c main.c
+NAME_BONUS = pipex_bonus
 
-# BONUS_FILES = 
+FILES = src/ft_split.c src/ft_strlcpy.c src/ft_strnstr.c src/ft_strjoin.c src/ft_strncmp.c get_path.c helpers.c pipex.c  main.c
+
+BONUS_FILES = src/ft_split.c src/ft_strlcpy.c src/ft_strnstr.c src/ft_strjoin.c src/ft_strncmp.c get_path.c helpers.c here_doc.c src/get_next_line.c src/get_next_line_utils.c pipex_bonus.c main_bonus.c
 
 FILES_O = $(FILES:.c=.o)
 
-# BONUS_O = $(BONUS_FILES:.c=.o)
-
-all : $(NAME)
-
-%.o : %.c
-	$(CC) -c $< -o $@
+BONUS_O = $(BONUS_FILES:.c=.o)
 
 $(NAME) : $(FILES_O)
-	$(CC) $(CFLAGS) $(FILES_O) -o $(NAME) 
+	cc $(CFLAGS) $? -o $@
 
-# bonus : $(BONUS_O)
+bonus : $(BONUS_O)
+	
+all : $(NAME) $(NAME_BONUS)
 
-# $(BONUS_O): $(BONUS_FILES)
-# 	cc $(CFLAGS) -c $(BONUS_FILES) 
-# 	$(AR) $(NAME) $(BONUS_O)
+$(NAME_BONUS): $(BONUS_O)
+	cc $(CFLAGS) $? -o $@
 
 clean :
-	rm -f $(FILES_O) 
-# $(BONUS_O)
+	rm -f $(FILES_O) $(BONUS_O)
 
 fclean : clean
-	rm -f $(NAME)
+	rm -f $(NAME) $(NAME_BONUS)
 
 re : fclean all
 

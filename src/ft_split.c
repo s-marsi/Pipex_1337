@@ -6,11 +6,11 @@
 /*   By: smarsi <smarsi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/07 19:00:28 by smarsi            #+#    #+#             */
-/*   Updated: 2024/02/15 12:33:25 by smarsi           ###   ########.fr       */
+/*   Updated: 2024/02/19 15:29:39 by smarsi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "pipex.h"
+#include "../pipex.h"
 
 static	void	ft_free(char **s)
 {

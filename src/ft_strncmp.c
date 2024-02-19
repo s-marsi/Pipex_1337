@@ -1,37 +1,27 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_strlcpy.c                                       :+:      :+:    :+:   */
+/*   ft_strncmp.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: smarsi <smarsi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/02/08 10:02:02 by smarsi            #+#    #+#             */
-/*   Updated: 2024/02/08 10:07:49 by smarsi           ###   ########.fr       */
+/*   Created: 2024/02/17 12:29:14 by smarsi            #+#    #+#             */
+/*   Updated: 2024/02/19 15:29:53 by smarsi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "pipex.h"
+#include "../pipex.h"
 
-static size_t	ft_strlen(const char *s)
+int	ft_strncmp(const char *s1, const char *s2, size_t n)
 {
-	size_t	len;
-
-	len = 0;
-	while (*(s++))
-		len++;
-	return (len);
-}
-
-size_t	ft_strlcpy(char *dst, const char *src, size_t dstsize)
-{
-	size_t	len_src;
-
-	len_src = ft_strlen(src);
-	if (dstsize > 0)
+	if (n == 0)
+		return (0);
+	if (!s1 || !s2)
+		return (1);
+	while ((*s1 && *s2) && n-- > 1 && *s1 == *s2)
 	{
-		while (*src && dstsize-- > 1)
-			*dst++ = *src++;
-		*dst = '\0';
+		s1++;
+		s2++;
 	}
-	return (len_src);
+	return ((unsigned char)*s1 - (unsigned char)*s2);
 }
