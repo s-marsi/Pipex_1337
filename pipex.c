@@ -5,81 +5,105 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: smarsi <smarsi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/02/10 19:16:47 by smarsi            #+#    #+#             */
-/*   Updated: 2024/02/17 11:58:48 by smarsi           ###   ########.fr       */
+/*   Created: 2024/02/19 16:07:11 by smarsi            #+#    #+#             */
+/*   Updated: 2024/02/19 16:25:35 by smarsi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "pipex.h"
 
-static void	child(char *cmd[], char *av[], char *envp[], int *fdp)
+static void	child1(char *av[], char *env[], int *fdp, char *path)
 {
-	char	**split_cmd;
+	char	**cmd;
+	char	*path_cmd;
+	char	*msg;
 	int		fd;
 
 	fd = open(av[1], O_RDONLY);
 	if (fd == -1 || dup2(fd, 0) == -1 || dup2(fdp[1], 1) == -1)
 	{
 		if (fd == -1)
-			free_notify(cmd, "File1");
+			free_notify(NULL, av[1]);
 		else
-			free_notify(cmd, "Error duplicating fd to (stdin|stdout)");
-		exit(1);
-	}
-	split_cmd = ft_split(av[2], ' ');
-	close_file(fdp, fd);
-	if (execve(cmd[0], split_cmd, envp) == -1)
-	{
-		free_notify(cmd, "command 1 not found");
-		exit(127);
-	}
-}
-
-static void	parent(char *cmd[], char *av[], char *envp[], int *fdp)
-{
-	char	**split_cmd;
-	int		fd;
-
-	split_cmd = ft_split(av[3], ' ');
-	fd = open(av[4], O_RDWR | O_CREAT | O_TRUNC, 0777);
-	if (fd == -1 || dup2(fd, 1) == -1 || dup2(fdp[0], 0) == -1)
-	{
-		if (fd == -1)
-			free_notify(cmd, "Error when create File2");
-		else
-			free_notify(cmd, "Error duplicating fd to (stdin|stdout)");
-		exit(2);
-	}
-	close_file(fdp, fd);
-	if (execve(cmd[1], split_cmd, envp) == -1)
-	{
-		free_notify(cmd, "command 2 not found");
-		exit(127);
-	}
-}
-
-void	fork_and_execute(char *cmd[], char *av[], char *envp[])
-{
-	pid_t	id;
-	pid_t	id2;
-	int		fdp[2];
-
-	if (pipe(fdp) != 0)
-		perror("pipe");
-	id = fork();
-	if (id == -1)
-		perror("fork");
-	else
-	{
-		if (id == 0)
-			child(cmd, av, envp, fdp);
-		else
-		{
-			id2 = fork();
-			if (id2 == 0)
-				parent(cmd, av, envp, fdp);
-		}
+			perror("");
+		exit(3);
 	}
 	close(fdp[0]);
+	path_cmd = get_cmd(av[2], path);
+	cmd = ft_split(av[2], ' ');
+	if (execve(path_cmd, cmd, env) == -1)
+	{
+		msg = ft_strjoin(cmd[0], " command not found");
+		free_notify(cmd, msg);
+		free(msg);
+		exit(127);
+	}
+}
+
+static void	child2(char *av[], char *env[], int *fdp, char *path)
+{
+	char	**cmd;
+	char	*path_cmd;
+	char	*msg;
+	int		fd;
+
+	fd = open(av[4], O_CREAT | O_RDWR | O_TRUNC, 0666);
+	if (fd == -1 || dup2(fdp[0], 0) == -1 || dup2(fd, 1) == -1)
+	{
+		if (fd == -1)
+			free_notify(NULL, av[4]);
+		else
+			perror("");
+		exit(3);
+	}
 	close(fdp[1]);
+	path_cmd = get_cmd(av[3], path);
+	cmd = ft_split(av[3], ' ');
+	if (execve(path_cmd, cmd, env) == -1)
+	{
+		msg = ft_strjoin(cmd[0], " command not found");
+		free_notify(cmd, msg);
+		free(msg);
+		exit(127);
+	}
+}
+
+static void	function_line(int *fdp)
+{
+	int	status;
+
+	close(fdp[0]);
+	close(fdp[1]);
+	while (waitpid(-1, &status, 0) != -1)
+	{
+		if (WEXITSTATUS(status) == 127 || WEXITSTATUS(status) == 3)
+			exit(WEXITSTATUS(status));
+	}
+}
+
+void	pipex(char *av[], char *env[])
+{
+	int	pid;
+	int	pid2;
+	int	fdp[2];
+
+	if (pipe(fdp) < 0)
+		perror("pipe");
+	pid = fork();
+	if (pid < 0)
+	{
+		perror("fork");
+		exit(3);
+	}
+	if (pid == 0)
+		child1(av, env, fdp, get_path(env));
+	else
+	{
+		pid2 = fork();
+		if (pid < 0)
+			perror("fork");
+		if (pid2 == 0)
+			child2(av, env, fdp, get_path(env));
+	}
+	function_line(fdp);
 }

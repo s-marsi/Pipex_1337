@@ -1,25 +1,37 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   main.c                                             :+:      :+:    :+:   */
+/*   ft_strlcpy.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: smarsi <smarsi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/02/06 09:37:02 by smarsi            #+#    #+#             */
-/*   Updated: 2024/02/19 16:06:11 by smarsi           ###   ########.fr       */
+/*   Created: 2024/02/08 10:02:02 by smarsi            #+#    #+#             */
+/*   Updated: 2024/02/19 15:29:50 by smarsi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "pipex.h"
+#include "../pipex.h"
 
-int	main(int ac, char *av[], char *env[])
+size_t	ft_strlen(const char *s)
 {
-	if (ac != 5)
+	size_t	len;
+
+	len = 0;
+	while (*(s++))
+		len++;
+	return (len);
+}
+
+size_t	ft_strlcpy(char *dst, const char *src, size_t dstsize)
+{
+	size_t	len_src;
+
+	len_src = ft_strlen(src);
+	if (dstsize > 0)
 	{
-		write(2, "cmd shld be like : ./pipex inFile cmd1 cmd2 outfile\n", 53);
-		exit(1);
+		while (*src && dstsize-- > 1)
+			*dst++ = *src++;
+		*dst = '\0';
 	}
-	else
-		pipex(av, env);
-	return (0);
+	return (len_src);
 }

@@ -5,98 +5,118 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: smarsi <smarsi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/02/15 16:17:40 by smarsi            #+#    #+#             */
-/*   Updated: 2024/02/17 11:59:02 by smarsi           ###   ########.fr       */
+/*   Created: 2024/02/19 16:07:02 by smarsi            #+#    #+#             */
+/*   Updated: 2024/02/19 16:24:41 by smarsi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "pipex.h"
+#include "pipex_bonus.h"
 
-static void	ft_free(char **str, char *msg)
+static void	redirect_io(t_pipex *pipex, char *av[], int *fdp)
 {
-	int	i;
-
-	perror(msg);
-	i = 0;
-	while (str[i])
-		free(str[i++]);
-}
-
-static void	close_file(int *fdp, int fd)
-{
-	close(fdp[0]);
-	close(fdp[1]);
-	close(fd);
-}
-
-static void	child(char *cmd[], char *av[], char *envp[], int *fdp)
-{
-	char	**split_cmd;
 	int		fd;
 
-	fd = open(av[1], O_RDONLY);
-	if (fd == -1 || dup2(fd, 0) == -1 || dup2(fdp[1], 1) == -1)
+	if (pipex->index == 2)
 	{
-		if (fd == -1)
-			ft_free(cmd, "File1");
-		else
-			ft_free(cmd, "Error duplicating file descriptor to (stdin|stdout)");
-		exit(1);
+		fd = open(av[1], O_RDONLY);
+		if (fd == -1 || dup2(fd, 0) == -1 || dup2(fdp[1], 1) == -1)
+		{
+			perror("");
+			exit(3);
+		}
 	}
-	split_cmd = ft_split(av[2], ' ');
-	close_file(fdp, fd);
-	if (execve(cmd[0], split_cmd, envp) == -1)
-	{
-		ft_free(cmd, "command 1 not found");
-		exit(127);
-	}
-}
-
-static void	parent(char *cmd[], char *av[], char *envp[], int *fdp)
-{
-	char	**split_cmd;
-	int		fd;
-
-	split_cmd = ft_split(av[3], ' ');
-	fd = open(av[4], O_RDWR | O_CREAT | O_TRUNC, 0777);
-	if (fd == -1 || dup2(fd, 1) == -1 || dup2(fdp[0], 0) == -1)
-	{
-		if (fd == -1)
-			ft_free(cmd, "Error when create File2");
-		else
-			ft_free(cmd, "Error duplicating file descriptor to (stdin|stdout)");
-		exit(2);
-	}
-	close_file(fdp, fd);
-	if (execve(cmd[1], split_cmd, envp) == -1)
-	{
-		ft_free(cmd, "command 2 not found");
-		exit(127);
-	}
-}
-
-void	fork_and_execute(char *cmd[], char *av[], char *envp[])
-{
-	pid_t	id;
-	pid_t	id2;
-	int		fdp[2];
-
-	if (pipe(fdp) != 0)
-		perror("pipe");
-	id = fork();
-	if (id == -1)
-		perror("fork");
 	else
 	{
-		if (id == 0)
-			child(cmd, av, envp, fdp);
-		else
+		if (dup2(fdp[0], 0) == -1 || dup2(fdp[1], 1) == -1)
 		{
-			id2 = fork();
-			if (id2 == 0)
-				parent(cmd, av, envp, fdp);
+			perror("");
+			exit(3);
 		}
 	}
 	close(fdp[0]);
+}
+
+static void	child1(t_pipex *pipex, char *av[], int *fdp)
+{
+	char	**cmd;
+	char	*path_cmd;
+	char	*msg;
+
+	redirect_io(pipex, av, fdp);
+	path_cmd = get_cmd(av[pipex->index], pipex->path);
+	cmd = ft_split(av[pipex->index], ' ');
+	if (execve(path_cmd, cmd, pipex->env) == -1)
+	{
+		msg = ft_strjoin(cmd[0], " command not found");
+		free_notify(cmd, msg);
+		free(msg);
+		exit(127);
+	}
+}
+
+static void	child2(t_pipex *pipex, char *av[], int *fdp)
+{
+	char	**cmd;
+	char	*path_cmd;
+	char	*msg;
+	int		fd;
+
+	fd = open(av[pipex->index + 1], O_CREAT | O_WRONLY | O_TRUNC, 0600);
+	if (fd == -1 || dup2(fdp[0], 0) == -1 || dup2(fd, 1) == -1)
+	{
+		perror("");
+		exit(3);
+	}
 	close(fdp[1]);
+	path_cmd = get_cmd(av[pipex->index], pipex->path);
+	cmd = ft_split(av[pipex->index + 1], ' ');
+	if (execve(path_cmd, cmd, pipex->env) == -1)
+	{
+		msg = ft_strjoin(cmd[0], " command not found");
+		free_notify(cmd, msg);
+		free(msg);
+		exit(127);
+	}
+}
+
+static void	child_processes(t_pipex *pipex, char *av[], int *fdp, int ac)
+{
+	int	pid;
+	int	pid2;
+
+	pid = fork();
+	check_fork(pid);
+	if (pid == 0)
+	{
+		while (pipex->index < ac - 2)
+		{
+			child1(pipex, av, fdp);
+			pipex->index++;
+		}
+	}
+	else
+	{
+		pid2 = fork();
+		if (pid < 0)
+			perror("fork");
+		if (pid2 == 0)
+		{
+			pipex->index = ac - 2;
+			child2(pipex, av, fdp);
+		}
+	}
+}
+
+void	pipex_bonus(int ac, char *av[], char *env[])
+{
+	int		fdp[2];
+	t_pipex	pipex;
+
+	pipex.index = 2;
+	pipex.env = env;
+	pipex.path = get_path(env);
+	if (pipe(fdp) < 0)
+		perror("pipe");
+	child_processes(&pipex, av, fdp, ac);
+	function_line(fdp);
 }

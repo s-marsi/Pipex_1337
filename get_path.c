@@ -6,11 +6,33 @@
 /*   By: smarsi <smarsi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/11 09:22:35 by smarsi            #+#    #+#             */
-/*   Updated: 2024/02/17 11:43:00 by smarsi           ###   ########.fr       */
+/*   Updated: 2024/02/19 16:14:32 by smarsi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "pipex.h"
+
+static char	*ft_strjoin_with_slash(char *s1, char *s2)
+{
+	char	*str;
+	int		len;
+
+	if (!s1 && !s2)
+		return (NULL);
+	else if (!s1)
+		return (ft_strdup(s2));
+	else if (!s2)
+		return (ft_strdup(s1));
+	len = ft_strlen(s1) + ft_strlen(s2) + 2;
+	str = malloc(len * sizeof(char));
+	if (!str)
+		return (str);
+	str[0] = '\0';
+	ft_strlcat(str, s1, ft_strlen(s1) + 1);
+	ft_strlcat(str, "/", ft_strlen(s1) + 2);
+	ft_strlcat(str, s2, len + 1);
+	return (str);
+}
 
 static void	ft_free(char **str, char **str2)
 {
@@ -59,7 +81,7 @@ static char	*path_cmd(char **split_path, char *cmd)
 	{
 		while (*split_path)
 		{
-			tmp = ft_strjoin(*split_path, cmd);
+			tmp = ft_strjoin_with_slash(*split_path, cmd);
 			if (access(tmp, F_OK & X_OK) == 0)
 			{
 				cmd_path = tmp;
@@ -77,14 +99,13 @@ char	*get_cmd(char *av, char *path)
 	char	**split_path;
 	char	**cmd;
 	char	*cmd_path;
-	char	*tmp;
 
 	cmd_path = NULL;
 	split_path = NULL;
 	if (path)
 		split_path = ft_split(path, ':');
 	cmd = ft_split(av, ' ');
-	if (access(cmd[0], F_OK & X_OK) == 0)
+	if (access(cmd[0], X_OK) == 0)
 		cmd_path = ft_strdup(cmd[0]);
 	else if (split_path)
 		cmd_path = path_cmd(split_path, cmd[0]);
