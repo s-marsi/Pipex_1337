@@ -6,11 +6,11 @@
 /*   By: smarsi <smarsi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/10 09:19:10 by smarsi            #+#    #+#             */
-/*   Updated: 2024/02/18 15:19:09 by smarsi           ###   ########.fr       */
+/*   Updated: 2024/02/19 16:15:22 by smarsi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "pipex.h"
+#include "../pipex_bonus.h"
 
 char	*ft_strchr(const char *s, int c)
 {

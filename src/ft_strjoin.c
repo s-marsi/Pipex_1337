@@ -6,11 +6,11 @@
 /*   By: smarsi <smarsi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/08 10:14:27 by smarsi            #+#    #+#             */
-/*   Updated: 2024/02/17 18:35:08 by smarsi           ###   ########.fr       */
+/*   Updated: 2024/02/19 15:29:46 by smarsi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "pipex.h"
+#include "../pipex.h"
 
 size_t	ft_strlcat(char *dst, const char *src, size_t dstsize)
 {

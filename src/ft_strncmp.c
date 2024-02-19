@@ -6,11 +6,11 @@
 /*   By: smarsi <smarsi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/17 12:29:14 by smarsi            #+#    #+#             */
-/*   Updated: 2024/02/18 15:19:03 by smarsi           ###   ########.fr       */
+/*   Updated: 2024/02/19 15:29:53 by smarsi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "pipex.h"
+#include "../pipex.h"
 
 int	ft_strncmp(const char *s1, const char *s2, size_t n)
 {

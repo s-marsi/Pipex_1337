@@ -6,11 +6,11 @@
 /*   By: smarsi <smarsi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/17 12:35:04 by smarsi            #+#    #+#             */
-/*   Updated: 2024/02/18 15:19:22 by smarsi           ###   ########.fr       */
+/*   Updated: 2024/02/19 16:14:17 by smarsi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "pipex.h"
+#include "pipex_bonus.h"
 
 void	put_str(char *str, int fd)
 {

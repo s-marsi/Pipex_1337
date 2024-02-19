@@ -6,7 +6,7 @@
 /*   By: smarsi <smarsi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/11 09:22:35 by smarsi            #+#    #+#             */
-/*   Updated: 2024/02/17 18:34:13 by smarsi           ###   ########.fr       */
+/*   Updated: 2024/02/19 16:14:32 by smarsi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -105,7 +105,7 @@ char	*get_cmd(char *av, char *path)
 	if (path)
 		split_path = ft_split(path, ':');
 	cmd = ft_split(av, ' ');
-	if (access(cmd[0], F_OK & X_OK) == 0)
+	if (access(cmd[0], X_OK) == 0)
 		cmd_path = ft_strdup(cmd[0]);
 	else if (split_path)
 		cmd_path = path_cmd(split_path, cmd[0]);

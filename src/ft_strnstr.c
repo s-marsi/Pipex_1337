@@ -1,37 +1,37 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_strlcpy.c                                       :+:      :+:    :+:   */
+/*   ft_strnstr.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: smarsi <smarsi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/02/08 10:02:02 by smarsi            #+#    #+#             */
-/*   Updated: 2024/02/17 14:31:05 by smarsi           ###   ########.fr       */
+/*   Created: 2024/02/07 18:39:26 by smarsi            #+#    #+#             */
+/*   Updated: 2024/02/19 15:29:56 by smarsi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "pipex.h"
+#include "../pipex.h"
 
-size_t	ft_strlen(const char *s)
+char	*ft_strnstr(const char *haystack, const char *needle)
 {
-	size_t	len;
+	size_t	i;
+	size_t	j;
 
-	len = 0;
-	while (*(s++))
-		len++;
-	return (len);
-}
-
-size_t	ft_strlcpy(char *dst, const char *src, size_t dstsize)
-{
-	size_t	len_src;
-
-	len_src = ft_strlen(src);
-	if (dstsize > 0)
+	if (!haystack && needle)
+		return (NULL);
+	if (!*needle)
+		return ((char *) haystack);
+	i = -1;
+	while (haystack[++i])
 	{
-		while (*src && dstsize-- > 1)
-			*dst++ = *src++;
-		*dst = '\0';
+		if (haystack[i] == needle[0])
+		{
+			j = 0;
+			while (haystack[i + j] && haystack[i + j] == needle[j])
+				j++;
+			if (!needle[j])
+				return ((char *) haystack + i);
+		}
 	}
-	return (len_src);
+	return (NULL);
 }
