@@ -6,7 +6,7 @@
 /*   By: smarsi <smarsi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/08 10:02:33 by smarsi            #+#    #+#             */
-/*   Updated: 2024/02/19 16:13:52 by smarsi           ###   ########.fr       */
+/*   Updated: 2024/02/20 15:27:54 by smarsi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,13 +16,15 @@
 # include <stdlib.h>
 # include <unistd.h>
 # include <fcntl.h>
-# include "string.h"
+# include <string.h>
+# include <sys/wait.h>
 # ifndef BUFFER_SIZE
 #  define BUFFER_SIZE 100
 # endif
 
 void	pipex(char *av[], char *env[]);
 void	pipex_bonus(int ac, char *av[], char *env[]);
+void	check_fork(int pid);
 char	*get_cmd(char *av, char *path);
 char	*get_path(char *envp[]);
 size_t	ft_strlen(const char *s);

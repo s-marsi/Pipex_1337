@@ -6,7 +6,7 @@
 /*   By: smarsi <smarsi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/19 16:09:48 by smarsi            #+#    #+#             */
-/*   Updated: 2024/02/19 16:24:12 by smarsi           ###   ########.fr       */
+/*   Updated: 2024/02/20 16:29:44 by smarsi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,13 +16,16 @@
 # include <stdlib.h>
 # include <unistd.h>
 # include <fcntl.h>
-# include "string.h"
+# include <string.h>
+# include <sys/wait.h>
 # ifndef BUFFER_SIZE
 #  define BUFFER_SIZE 100
 # endif
 
 void	pipex_bonus(int ac, char *av[], char *env[]);
 void	check_fork(int pid);
+void	foreach_cmds(int ac, char *av[], char *env[]);
+void	read_content(int *fdp, char **av);
 void	function_line(int *fdp);
 char	*get_cmd(char *av, char *path);
 char	*get_path(char *envp[]);
@@ -33,6 +36,7 @@ char	**ft_split(char const *s, char c);
 char	*ft_strjoin(char *s1, char *s2);
 char	*ft_strdup(const char *s1);
 int		ft_strncmp(const char *s1, const char *s2, size_t n);
+int		ft_strcmp(const char *s1, const char *s2);
 void	close_file(int *fdp, int fd);
 void	free_notify(char **str, char *msg);
 void	heredoc(int ac, char *av[], char *env[]);
@@ -46,4 +50,6 @@ typedef struct bonus_list
 	char	**env;
 	char	*path;
 }	t_pipex;
+void	ft_exec(t_pipex *pipex, char *av[]);
+
 #endif

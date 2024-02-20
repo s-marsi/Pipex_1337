@@ -6,7 +6,7 @@
 /*   By: smarsi <smarsi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/17 12:35:04 by smarsi            #+#    #+#             */
-/*   Updated: 2024/02/19 16:14:17 by smarsi           ###   ########.fr       */
+/*   Updated: 2024/02/20 16:30:01 by smarsi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,7 +66,7 @@ static void	pipe_redirect(char *cmd, char *env[])
 	close_file(fdp, -1);
 }
 
-static void	foreach_cmds(int ac, char *av[], char *env[])
+void	foreach_cmds(int ac, char *av[], char *env[])
 {
 	int	i;
 	int	pid;
@@ -90,28 +90,21 @@ static void	foreach_cmds(int ac, char *av[], char *env[])
 	}
 }
 
-void	heredoc(int ac, char *av[], char *env[])
+void	read_content(int *fdp, char **av)
 {
 	char	*buf;
-	int		fd_out;
-	int		fdp[2];
+	char	*delimiter;
 
 	buf = NULL;
-	pipe(fdp);
-	while (ft_strncmp(buf, av[2], ft_strlen(av[2])) != 0)
+	while (1)
 	{
-		write(0, "heredoc>", 8);
+		write(1, "heredoc>", 8);
+		delimiter = ft_strjoin(av[2], "\n");
 		buf = get_next_line(0);
-		if (ft_strncmp(buf, av[2], ft_strlen(av[2])) != 0)
-			put_str(buf, fdp[1]);
+		if (!ft_strcmp(buf, delimiter))
+			break ;
+		put_str(buf, fdp[1]);
+		free(delimiter);
 		free(buf);
 	}
-	fd_out = open(av[ac - 1], O_CREAT | O_WRONLY | O_TRUNC, 0600);
-	if (dup2(fdp[0], 0) == -1 || dup2(fd_out, 1) == -1)
-	{
-		perror("Error duplicating file descriptor to (stdin|stdout)");
-		exit(1);
-	}
-	close_file(fdp, fd_out);
-	foreach_cmds(ac, av, env);
 }

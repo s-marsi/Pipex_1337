@@ -5,118 +5,107 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: smarsi <smarsi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/02/19 16:07:02 by smarsi            #+#    #+#             */
-/*   Updated: 2024/02/19 16:24:41 by smarsi           ###   ########.fr       */
+/*   Created: 2024/02/20 11:54:06 by smarsi            #+#    #+#             */
+/*   Updated: 2024/02/20 18:46:24 by smarsi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "pipex_bonus.h"
 
-static void	redirect_io(t_pipex *pipex, char *av[], int *fdp)
+static void	redirect_io(int *fdp)
 {
-	int		fd;
-
-	if (pipex->index == 2)
-	{
-		fd = open(av[1], O_RDONLY);
-		if (fd == -1 || dup2(fd, 0) == -1 || dup2(fdp[1], 1) == -1)
-		{
-			perror("");
-			exit(3);
-		}
-	}
-	else
-	{
-		if (dup2(fdp[0], 0) == -1 || dup2(fdp[1], 1) == -1)
-		{
-			perror("");
-			exit(3);
-		}
-	}
 	close(fdp[0]);
-}
-
-static void	child1(t_pipex *pipex, char *av[], int *fdp)
-{
-	char	**cmd;
-	char	*path_cmd;
-	char	*msg;
-
-	redirect_io(pipex, av, fdp);
-	path_cmd = get_cmd(av[pipex->index], pipex->path);
-	cmd = ft_split(av[pipex->index], ' ');
-	if (execve(path_cmd, cmd, pipex->env) == -1)
-	{
-		msg = ft_strjoin(cmd[0], " command not found");
-		free_notify(cmd, msg);
-		free(msg);
-		exit(127);
-	}
-}
-
-static void	child2(t_pipex *pipex, char *av[], int *fdp)
-{
-	char	**cmd;
-	char	*path_cmd;
-	char	*msg;
-	int		fd;
-
-	fd = open(av[pipex->index + 1], O_CREAT | O_WRONLY | O_TRUNC, 0600);
-	if (fd == -1 || dup2(fdp[0], 0) == -1 || dup2(fd, 1) == -1)
+	if (dup2(fdp[1], 1) == -1)
 	{
 		perror("");
-		exit(3);
+		exit(1);
 	}
 	close(fdp[1]);
-	path_cmd = get_cmd(av[pipex->index], pipex->path);
-	cmd = ft_split(av[pipex->index + 1], ' ');
-	if (execve(path_cmd, cmd, pipex->env) == -1)
-	{
-		msg = ft_strjoin(cmd[0], " command not found");
-		free_notify(cmd, msg);
-		free(msg);
-		exit(127);
-	}
 }
 
-static void	child_processes(t_pipex *pipex, char *av[], int *fdp, int ac)
+static void	child1(t_pipex *pipex, char *av[])
 {
 	int	pid;
-	int	pid2;
+	int	fdp[2];
 
+	if (pipe(fdp) == -1)
+	{
+		perror("pipe");
+		exit(1);
+	}
 	pid = fork();
 	check_fork(pid);
 	if (pid == 0)
 	{
-		while (pipex->index < ac - 2)
-		{
-			child1(pipex, av, fdp);
-			pipex->index++;
-		}
+		redirect_io(fdp);
+		ft_exec(pipex, av);
 	}
-	else
+	if (dup2(fdp[0], 0) == -1)
 	{
-		pid2 = fork();
-		if (pid < 0)
-			perror("fork");
-		if (pid2 == 0)
-		{
-			pipex->index = ac - 2;
-			child2(pipex, av, fdp);
-		}
+		perror("");
+		exit(1);
 	}
+	close(fdp[0]);
+	close(fdp[1]);
+}
+
+static void	child2(t_pipex *pipex, char *av[])
+{
+	int	pid;
+	int	fdp[2];
+
+	if (pipe(fdp) == -1)
+	{
+		perror("pipe");
+		exit(3);
+	}
+	pid = fork();
+	check_fork(pid);
+	if (pid == 0)
+	{
+		close(fdp[0]);
+		close(fdp[1]);
+		ft_exec(pipex, av);
+	}
+	close(fdp[0]);
+	close(fdp[1]);
+}
+
+static void	child_processes(t_pipex *pipex, char *av[], int ac)
+{
+	int	fd_in;
+	int	fd_out;
+
+	fd_in = open(av[1], O_RDONLY);
+	fd_out = open(av[ac - 1], O_CREAT | O_WRONLY | O_TRUNC, 0666);
+	if (fd_in == -1 || dup2(fd_in, 0) == -1 || fd_out == -1)
+	{
+		perror("");
+		exit(1);
+	}
+	close(fd_in);
+	while (pipex->index < ac - 1)
+	{
+		if (pipex->index == ac - 2)
+			child2(pipex, av);
+		else
+		{
+			dup2(fd_out, 1);
+			close(fd_out);
+			child1(pipex, av);
+		}
+		pipex->index++;
+	}
+	close(fd_out);
+	function_line(NULL);
 }
 
 void	pipex_bonus(int ac, char *av[], char *env[])
 {
-	int		fdp[2];
 	t_pipex	pipex;
 
 	pipex.index = 2;
 	pipex.env = env;
 	pipex.path = get_path(env);
-	if (pipe(fdp) < 0)
-		perror("pipe");
-	child_processes(&pipex, av, fdp, ac);
-	function_line(fdp);
+	child_processes(&pipex, av, ac);
 }

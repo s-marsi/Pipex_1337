@@ -6,7 +6,7 @@
 /*   By: smarsi <smarsi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/19 16:07:11 by smarsi            #+#    #+#             */
-/*   Updated: 2024/02/19 16:25:35 by smarsi           ###   ########.fr       */
+/*   Updated: 2024/02/20 15:35:35 by smarsi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,7 @@ static void	child1(char *av[], char *env[], int *fdp, char *path)
 			free_notify(NULL, av[1]);
 		else
 			perror("");
-		exit(3);
+		exit(1);
 	}
 	close(fdp[0]);
 	path_cmd = get_cmd(av[2], path);
@@ -47,14 +47,14 @@ static void	child2(char *av[], char *env[], int *fdp, char *path)
 	char	*msg;
 	int		fd;
 
-	fd = open(av[4], O_CREAT | O_RDWR | O_TRUNC, 0666);
+	fd = open(av[4], O_CREAT | O_WRONLY | O_TRUNC, 0666);
 	if (fd == -1 || dup2(fdp[0], 0) == -1 || dup2(fd, 1) == -1)
 	{
 		if (fd == -1)
 			free_notify(NULL, av[4]);
 		else
 			perror("");
-		exit(3);
+		exit(1);
 	}
 	close(fdp[1]);
 	path_cmd = get_cmd(av[3], path);
@@ -76,7 +76,7 @@ static void	function_line(int *fdp)
 	close(fdp[1]);
 	while (waitpid(-1, &status, 0) != -1)
 	{
-		if (WEXITSTATUS(status) == 127 || WEXITSTATUS(status) == 3)
+		if (WEXITSTATUS(status) == 127 || WEXITSTATUS(status) == 1)
 			exit(WEXITSTATUS(status));
 	}
 }
@@ -100,8 +100,7 @@ void	pipex(char *av[], char *env[])
 	else
 	{
 		pid2 = fork();
-		if (pid < 0)
-			perror("fork");
+		check_fork(pid2);
 		if (pid2 == 0)
 			child2(av, env, fdp, get_path(env));
 	}

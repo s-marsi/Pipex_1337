@@ -18,12 +18,12 @@ BONUS_O = $(BONUS_FILES:.c=.o)
 $(NAME) : $(FILES_O)
 	cc $(CFLAGS) $? -o $@
 
-bonus : $(BONUS_O)
-	
+$(NAME_BONUS) : $(BONUS_O)
+	cc $(CFLAGS) $? -o $@
+
 all : $(NAME) $(NAME_BONUS)
 
-$(NAME_BONUS): $(BONUS_O)
-	cc $(CFLAGS) $? -o $@
+bonus : $(NAME_BONUS)
 
 clean :
 	rm -f $(FILES_O) $(BONUS_O)
