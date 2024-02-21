@@ -6,7 +6,7 @@
 /*   By: smarsi <smarsi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/17 11:39:22 by smarsi            #+#    #+#             */
-/*   Updated: 2024/02/20 18:49:05 by smarsi           ###   ########.fr       */
+/*   Updated: 2024/02/21 13:17:32 by smarsi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,6 +71,7 @@ void	ft_exec(t_pipex *pipex, char *av[])
 		msg = ft_strjoin(cmd[0], " command not found");
 		free_notify(cmd, msg);
 		free(msg);
+		free(path_cmd);
 		exit(127);
 	}
 }

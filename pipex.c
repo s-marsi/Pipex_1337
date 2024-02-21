@@ -6,7 +6,7 @@
 /*   By: smarsi <smarsi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/19 16:07:11 by smarsi            #+#    #+#             */
-/*   Updated: 2024/02/20 15:35:35 by smarsi           ###   ########.fr       */
+/*   Updated: 2024/02/21 13:16:46 by smarsi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,6 +36,7 @@ static void	child1(char *av[], char *env[], int *fdp, char *path)
 		msg = ft_strjoin(cmd[0], " command not found");
 		free_notify(cmd, msg);
 		free(msg);
+		free(path_cmd);
 		exit(127);
 	}
 }
@@ -64,20 +65,8 @@ static void	child2(char *av[], char *env[], int *fdp, char *path)
 		msg = ft_strjoin(cmd[0], " command not found");
 		free_notify(cmd, msg);
 		free(msg);
+		free(path_cmd);
 		exit(127);
-	}
-}
-
-static void	function_line(int *fdp)
-{
-	int	status;
-
-	close(fdp[0]);
-	close(fdp[1]);
-	while (waitpid(-1, &status, 0) != -1)
-	{
-		if (WEXITSTATUS(status) == 127 || WEXITSTATUS(status) == 1)
-			exit(WEXITSTATUS(status));
 	}
 }
 

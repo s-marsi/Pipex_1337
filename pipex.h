@@ -6,7 +6,7 @@
 /*   By: smarsi <smarsi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/08 10:02:33 by smarsi            #+#    #+#             */
-/*   Updated: 2024/02/20 15:27:54 by smarsi           ###   ########.fr       */
+/*   Updated: 2024/02/21 13:02:26 by smarsi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,6 +25,7 @@
 void	pipex(char *av[], char *env[]);
 void	pipex_bonus(int ac, char *av[], char *env[]);
 void	check_fork(int pid);
+void	function_line(int *fdp);
 char	*get_cmd(char *av, char *path);
 char	*get_path(char *envp[]);
 size_t	ft_strlen(const char *s);

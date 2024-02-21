@@ -6,7 +6,7 @@
 /*   By: smarsi <smarsi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/19 16:09:48 by smarsi            #+#    #+#             */
-/*   Updated: 2024/02/20 16:29:44 by smarsi           ###   ########.fr       */
+/*   Updated: 2024/02/21 13:13:54 by smarsi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,6 +27,7 @@ void	check_fork(int pid);
 void	foreach_cmds(int ac, char *av[], char *env[]);
 void	read_content(int *fdp, char **av);
 void	function_line(int *fdp);
+void	dup_file(int fd, int in_out);
 char	*get_cmd(char *av, char *path);
 char	*get_path(char *envp[]);
 size_t	ft_strlen(const char *s);

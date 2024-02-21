@@ -6,11 +6,21 @@
 /*   By: smarsi <smarsi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/15 11:57:34 by smarsi            #+#    #+#             */
-/*   Updated: 2024/02/20 16:31:15 by smarsi           ###   ########.fr       */
+/*   Updated: 2024/02/21 14:55:04 by smarsi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "pipex_bonus.h"
+
+void	dup_file(int fd, int in_out)
+{
+	dup2(fd, in_out);
+	if (dup2(fd, in_out) == -1)
+	{
+		perror("Error duplicating file descriptor to (stdin|stdout)");
+		exit(1);
+	}
+}
 
 void	heredoc(int ac, char *av[], char *env[])
 {
@@ -44,5 +54,6 @@ int	main(int ac, char *av[], char *env[])
 		heredoc(ac, av, env);
 	else
 		pipex_bonus(ac, av, env);
+	system("leaks pipex_bonus");
 	return (0);
 }
