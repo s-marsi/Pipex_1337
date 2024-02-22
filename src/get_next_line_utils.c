@@ -64,7 +64,7 @@ char	*read_all(int fd, char *last)
 			return (NULL);
 		}
 		buf[size] = '\0';
-		last = ft_strjoin(last, buf);
+		last = ft_strjoin_next(last, buf);
 	}
 	free(buf);
 	return (last);
