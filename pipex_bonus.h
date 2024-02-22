@@ -44,6 +44,7 @@ void	heredoc(int ac, char *av[], char *env[]);
 char	*get_next_line(int fd);
 char	*read_all(int fd, char *last);
 size_t	ft_strlcat(char *dst, const char *src, size_t dstsize);
+char	*ft_strjoin_next(char *s1, char *s2);
 char	*ft_strchr(const char *s, int c);
 typedef struct bonus_list
 {
