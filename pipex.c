@@ -6,7 +6,7 @@
 /*   By: smarsi <smarsi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/19 16:07:11 by smarsi            #+#    #+#             */
-/*   Updated: 2024/02/21 13:16:46 by smarsi           ###   ########.fr       */
+/*   Updated: 2024/02/22 18:42:30 by smarsi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,6 +66,7 @@ static void	child2(char *av[], char *env[], int *fdp, char *path)
 		free_notify(cmd, msg);
 		free(msg);
 		free(path_cmd);
+		system("leaks pipex");
 		exit(127);
 	}
 }

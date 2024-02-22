@@ -5,7 +5,7 @@ CC = cc
 
 NAME = pipex
 
-NAME_BONUS = pipex
+NAME_BONUS = pipex_bonus
 
 FILES = src/ft_split.c src/ft_strlcpy.c src/ft_strnstr.c src/ft_strjoin.c src/ft_strncmp.c get_path.c helpers.c pipex.c  main.c
 
