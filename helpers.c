@@ -6,7 +6,7 @@
 /*   By: smarsi <smarsi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/17 11:39:22 by smarsi            #+#    #+#             */
-/*   Updated: 2024/02/21 13:17:32 by smarsi           ###   ########.fr       */
+/*   Updated: 2024/02/23 11:12:20 by smarsi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,8 +64,11 @@ void	ft_exec(t_pipex *pipex, char *av[])
 	char	*path_cmd;
 	char	**cmd;
 
-	path_cmd = get_cmd(av[pipex->index], pipex->path);
-	cmd = ft_split(av[pipex->index], ' ');
+	if (av[pipex->index][0] == '\0')
+		cmd = ft_split("cat", ' ');
+	else
+		cmd = ft_split(av[pipex->index], ' ');
+	path_cmd = get_cmd(cmd[0], pipex->path);
 	if (execve(path_cmd, cmd, pipex->env) == -1)
 	{
 		msg = ft_strjoin(cmd[0], " command not found");

@@ -6,7 +6,7 @@
 /*   By: smarsi <smarsi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/15 11:57:34 by smarsi            #+#    #+#             */
-/*   Updated: 2024/02/21 14:55:04 by smarsi           ###   ########.fr       */
+/*   Updated: 2024/02/23 11:11:11 by smarsi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,6 +54,5 @@ int	main(int ac, char *av[], char *env[])
 		heredoc(ac, av, env);
 	else
 		pipex_bonus(ac, av, env);
-	system("leaks pipex_bonus");
 	return (0);
 }

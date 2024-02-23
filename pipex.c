@@ -6,17 +6,35 @@
 /*   By: smarsi <smarsi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/19 16:07:11 by smarsi            #+#    #+#             */
-/*   Updated: 2024/02/22 18:42:30 by smarsi           ###   ########.fr       */
+/*   Updated: 2024/02/23 11:07:42 by smarsi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "pipex.h"
 
-static void	child1(char *av[], char *env[], int *fdp, char *path)
+static void	ft_exec(char *av, char *env[], char *path)
 {
 	char	**cmd;
 	char	*path_cmd;
 	char	*msg;
+
+	if (av[0] == '\0')
+		cmd = ft_split("cat", ' ');
+	else
+		cmd = ft_split(av, ' ');
+	path_cmd = get_cmd(cmd[0], path);
+	if (execve(path_cmd, cmd, env) == -1)
+	{
+		msg = ft_strjoin(cmd[0], " command not found");
+		free_notify(cmd, msg);
+		free(msg);
+		free(path_cmd);
+		exit(127);
+	}
+}
+
+static void	child1(char *av[], char *env[], int *fdp, char *path)
+{
 	int		fd;
 
 	fd = open(av[1], O_RDONLY);
@@ -29,23 +47,11 @@ static void	child1(char *av[], char *env[], int *fdp, char *path)
 		exit(1);
 	}
 	close(fdp[0]);
-	path_cmd = get_cmd(av[2], path);
-	cmd = ft_split(av[2], ' ');
-	if (execve(path_cmd, cmd, env) == -1)
-	{
-		msg = ft_strjoin(cmd[0], " command not found");
-		free_notify(cmd, msg);
-		free(msg);
-		free(path_cmd);
-		exit(127);
-	}
+	ft_exec(av[2], env, path);
 }
 
 static void	child2(char *av[], char *env[], int *fdp, char *path)
 {
-	char	**cmd;
-	char	*path_cmd;
-	char	*msg;
 	int		fd;
 
 	fd = open(av[4], O_CREAT | O_WRONLY | O_TRUNC, 0666);
@@ -58,17 +64,7 @@ static void	child2(char *av[], char *env[], int *fdp, char *path)
 		exit(1);
 	}
 	close(fdp[1]);
-	path_cmd = get_cmd(av[3], path);
-	cmd = ft_split(av[3], ' ');
-	if (execve(path_cmd, cmd, env) == -1)
-	{
-		msg = ft_strjoin(cmd[0], " command not found");
-		free_notify(cmd, msg);
-		free(msg);
-		free(path_cmd);
-		system("leaks pipex");
-		exit(127);
-	}
+	ft_exec(av[3], env, path);
 }
 
 void	pipex(char *av[], char *env[])

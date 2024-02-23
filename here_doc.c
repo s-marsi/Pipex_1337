@@ -6,7 +6,7 @@
 /*   By: smarsi <smarsi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/17 12:35:04 by smarsi            #+#    #+#             */
-/*   Updated: 2024/02/21 14:53:49 by smarsi           ###   ########.fr       */
+/*   Updated: 2024/02/23 11:21:24 by smarsi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,9 +32,12 @@ static void	execute_cmd(char *cmd, char *env[])
 	char	**split_cmd;
 	char	*cmd_path;
 
+	if (cmd[0] == '\0')
+		split_cmd = ft_split("cat", ' ');
+	else
+		split_cmd = ft_split(cmd, ' ');
 	path = get_path(env);
-	cmd_path = get_cmd(cmd, path);
-	split_cmd = ft_split(cmd, ' ');
+	cmd_path = get_cmd(split_cmd[0], path);
 	if (execve(cmd_path, split_cmd, env) == -1)
 	{
 		msg = ft_strjoin(split_cmd[0], " command not found");
@@ -91,10 +94,7 @@ void	foreach_cmds(int ac, char *av[], char *env[])
 	while (waitpid(-1, &status, 0) != -1)
 	{
 		if (WEXITSTATUS(status) == 127 || WEXITSTATUS(status) == 1)
-		{
-			system("leaks pipex_bonus");
 			exit(WEXITSTATUS(status));
-		}
 	}
 }
 
