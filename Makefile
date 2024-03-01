@@ -2,7 +2,7 @@ CFLAGS = -Wall -Wextra -Werror #-fsanitize=address -g3
 
 CC = cc
 
-NAME = pipex
+NAME = pipex 
 
 NAME_BONUS = pipex_bonus
 
