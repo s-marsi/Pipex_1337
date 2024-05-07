@@ -51,7 +51,8 @@ This project aims to replicate the behavior of the shell pipe command using a cu
       <li> For example :  </br>
         ```bash
         ./pipex Makefile cat "head -3" out_file.txt
-        ```</li>
+        ```
+      </li>
     </ul>
   </li>
 </ol>
