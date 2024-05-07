@@ -37,7 +37,7 @@ This project aims to replicate the behavior of the shell pipe command using a cu
     ```
 <ol style="margin-left: 15px;">
   <li style="font-size: 20px; font-weight: 600;">
-    Usage :
+    3. Usage :
     <ul>
       <li>Execute in your bash terminal: <code>./pipex input_file cmd1 cmd2 output_file</code></li>
       <li> 
