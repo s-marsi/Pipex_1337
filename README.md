@@ -48,7 +48,8 @@ This project aims to replicate the behavior of the shell pipe command using a cu
         - <code>cmd2</code>: the second command to apply to the output of cmd1.
         - <code>output_file</code>: the file to write the output to.
       </li>
-      <li> For example : ```bash
+      <li> For example : 
+        ```bash
         ./pipex Makefile cat "head -3" out_file.txt
         ```</li>
     </ul>
