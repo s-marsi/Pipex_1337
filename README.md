@@ -18,7 +18,7 @@ This project aims to replicate the behavior of the shell pipe command using a cu
 
 ## Description :
 - Pipex : emulates the functionality of shell pipes through a custom C program. Designed to replicate the behavior of the pipe command, it offers a streamlined solution for inter-process communication. Enhance your understanding of system calls and process management with this project."
-
+- A pipe is a connection between two processes in the UNIX Operating System. It allows them to communicate by sending information from the standard output of one process to the standard input of the other process. Pipes are commonly used for communication between related processes.
   
 ## Getting Started
 ### Prerequisites
