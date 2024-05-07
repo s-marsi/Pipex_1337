@@ -35,24 +35,22 @@ This project aims to replicate the behavior of the shell pipe command using a cu
     make all  # This will generate the pipex program.
     make clean      # This will remove object files.
     ```
-
 <ol style="margin-left: 15px;">
   <li style="font-size: 20px; font-weight: 600;">
     Usage :
     <ul>
       <li>Execute in your bash terminal: <code>./pipex input_file cmd1 cmd2 output_file</code></li>
       <li> 
-        - <code>./pipex</code>: the name of the program. </br>
-        - <code>input_file</code> : the file that serves as input for the program. </br>
-        - <code>cmd1</code> : the first command to apply to the input. </br>
-        - <code>cmd2</code> : the second command to apply to the output of cmd1. </br>
-        - <code>output_file</code> : the file to write the output to. </br>
+        - <code>./pipex</code>: the name of the program. <br>
+        - <code>input_file</code>: the file that serves as input for the program. <br>
+        - <code>cmd1</code>: the first command to apply to the input. <br>
+        - <code>cmd2</code>: the second command to apply to the output of cmd1. <br>
+        - <code>output_file</code>: the file to write the output to. <br>
       </li>
-      <li> For example :  </br>
-      ```bash
-    ./pipex Makefile cat "head -3" out_file.txt.
-    ```
+      <li> For example: <br>
+        <pre><code>./pipex Makefile cat "head -3" out_file.txt</code></pre>
       </li>
     </ul>
   </li>
 </ol>
+
