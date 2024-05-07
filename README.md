@@ -35,7 +35,7 @@ This project aims to replicate the behavior of the shell pipe command using a cu
     make all  # This will generate the pipex program.
     make clean      # This will remove object files.
     ```
-<ol style="margin-left: 15px;">
+<ul style="margin-left: 15px; list-style-type:none">
   <li style="font-size: 20px; font-weight: 600;">
     3. Usage :
     <ul>
@@ -52,5 +52,5 @@ This project aims to replicate the behavior of the shell pipe command using a cu
       </li>
     </ul>
   </li>
-</ol>
+</ul>
 
