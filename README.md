@@ -49,10 +49,10 @@ This project aims to replicate the behavior of the shell pipe command using a cu
         - <code>output_file</code> : the file to write the output to. </br>
       </li>
       <li> For example :  </br>
+      ```bash
+    ./pipex Makefile cat "head -3" out_file.txt.
+    ```
       </li>
     </ul>
   </li>
 </ol>
-```bash
-  ./pipex Makefile cat "head -3" out_file.txt
-```
